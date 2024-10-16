@@ -1,0 +1,58 @@
+{% extends 'library/base.html' %}
+
+{% block title %} Details Management {% endblock title %}
+
+{% block mainbody %}
+<div class="container">
+    <div class="row justify-content-around">
+        <div class="colbook_list-sm-8">
+            <h1 class="text-white text-center my-5">Hello, {{ user.username }}</h1>
+            <h3 class="text-white">Library Management System</h3>
+
+            <a href="{% url 'add_book' %}" class="btn btn-primary mb-3 float-right">Add New Book</a>
+
+            <!-- Completed Details Table -->
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Sl No</th>
+                        <th scope="col">Book Image</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">ISBN</th>
+                        <th scope="col">Author</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Copies Available</th>
+                        <th scope="col">Action</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            {% if book.img %}
+                                <img src="{{ book.img.url }}" alt="{{ book.name }}" style="width: 100px; height: auto;">
+                            {% else %}
+                                No Image
+                            {% endif %}
+                        </td>
+                        <td>{{ book.name }}</td>
+                        <td>{{ book.isbn }}</td>
+                        <td>{{ book.author }}</td>
+                        <td>{{ book.category }}</td>
+                        <td>{{ book.copies_available }}</td>
+                        <td>
+
+                            <a href="{% url 'edit_book' book.id %}" class="btn btn-info btn-sm">Update</a>
+                            <a href="{% url 'delete_book' book.id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock mainbody %}

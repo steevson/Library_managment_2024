@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrowed Books</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h2>Borrowed Books</h2>
+  <ul>
+    {% for record in borrow_records %}
+      <li>
+        "{{ record.book.name }}" - Borrowed on: {{ record.borrowed_on }} | Due Date: {{ record.due_date }}
+        <a href="{% url 'return_book' record.id %}">Return</a>
+      </li>
+    {% empty %}
+      <li>You have not borrowed any books.</li>
+    {% endfor %}
+  </ul>
+  <p>You can borrow up to 2 books at a time.</p>
+</body>
+</html>

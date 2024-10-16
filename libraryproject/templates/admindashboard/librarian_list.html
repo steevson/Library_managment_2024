@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        nav {
+            background-color: #808080; /* Grey */
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bolder;
+        }
+
+        h2 {
+            color: #5c6bc0; /* Blue */
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .container {
+            width: 100%; /* Full Width */
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1200px; /* Optional: Limit the max width */
+        }
+
+        a.button {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 15px;
+            background-color: #5c6bc0; /* Blue */
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        a.button:hover {
+            background-color: #3949ab; /* Darker Blue */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #5c6bc0; /* Blue */
+            color: white;
+        }
+
+        td a {
+            color: #5c6bc0; /* Blue */
+            text-decoration: none;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <nav style="width:100%">
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container" style="margin-top: 5%;">
+        <h2>Librarian List</h2>
+        <a href="{% url 'add_librarian' %}" class="button">Add Librarian</a>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Contact Number</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for librarian in librarians %}
+                <tr>
+                    <td>{{ librarian.username }}</td>
+                    <td>{{ librarian.first_name }} {{ librarian.last_name }}</td>
+                    <td>{{ librarian.email }}</td>
+                    <td>{{ librarian.contact_number }}</td>
+                    <td>{{ librarian.address }}</td>
+                    <td>
+                        <a href="{% url 'update_librarian' librarian.id %}">Edit</a> |
+                        <a href="{% url 'delete_librarian' librarian.id %}" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No librarians found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .card {
+      margin: 20px;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .header {
+      background-color: #007bff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #007bff;
+      color: white;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    .container {
+      margin-bottom: 80px;
+    }
+
+    .table-bordered {
+      margin-top: 20px;
+    }
+
+    h2,
+    h3 {
+      margin-top: 40px;
+    }
+
+    /* Custom navbar styles */
+    .navbar-custom {
+      background-color: #007bff; /* Navbar background color set to #007bff */
+    }
+
+    .navbar-custom .nav-link {
+      color: white; /* Navbar text color */
+    }
+
+    .navbar-custom .navbar-brand {
+      color: white; /* Brand text color */
+    }
+  </style>
+  {% load static %}
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
+    <a class="navbar-brand" href="#">Library Management</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <h2>Hello, {{ user.username }}</h2>
+  </div>
+
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card text-white bg-success">
+          <div class="card-body">
+            <h5 class="card-title">Manage Books</h5>
+            <p class="card-text">Add, edit, or remove books from the library collection.</p>
+            <a href="{% url 'book_list' %}" class="btn btn-light">Go to Books</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-info">
+          <div class="card-body">
+            <h5 class="card-title">Manage Members</h5>
+            <p class="card-text">View and manage members and their accounts.</p>
+            <a href="{% url 'member_management' %}" class="btn btn-light">Go to Members</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-warning">
+          <div class="card-body">
+            <h5 class="card-title">Manage Staff List</h5>
+            <p class="card-text">View and manage librarians and their accounts.</p>
+            <a href="{% url 'staff_management' %}" class="btn btn-light">Manage Librarian</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card text-white bg-danger">
+          <div class="card-body">
+            <h5 class="card-title">Borrow Records and Fines</h5>
+            <p class="card-text">View borrow records, fines, and issued books.</p>
+            <a href="{% url 'member_borrow_summary' %}" class="btn btn-light">Total Revenue</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-primary position-relative">
+          <div class="card-body">
+            <h5 class="card-title">Member Requests</h5>
+            <p class="card-text">Manage member requests from librarians.</p>
+            <a href="{% url 'manage_member_requests' %}" class="btn btn-light">Manage Requests</a>
+            {% if member_request_count > 0 %}
+              <span class="badge badge-light position-absolute" style="top: 10px; right: 10px;">
+                {{ member_request_count }}
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-secondary">
+          <div class="card-body">
+            <h5 class="card-title">Create Librarian/Member</h5>
+            <p class="card-text">Click here to create librarian or member accounts.</p>
+            <a href="{% url 'register' %}" class="btn btn-light">Create Librarian/Member</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <h2>Admin Approval Dashboard</h2>
+
+
+    <!-- Pending Borrow Requests -->
+    <h3>Pending Borrow Requests</h3>
+    {% if borrow_requests %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Member Email</th>
+            <th>Requested Book</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for request in borrow_requests %}
+            <tr>
+              <td>{{ request.member.user.email }}</td>
+              <td>{{ request.book.name }}</td>
+              <td>
+                <a class="btn btn-success" href="{% url 'approve_borrow' request.id %}">Approve</a>
+                <a class="btn btn-danger" href="{% url 'reject_borrow' request.id %}">Reject</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No pending borrow requests.</p>
+    {% endif %}
+
+    <!-- Pending Return Requests -->
+    <h3>Pending Return Requests</h3>
+    {% if return_requests %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Member Email</th>
+            <th>Requested Book</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for request in return_requests %}
+            <tr>
+              <td>{{ request.member.user.email }}</td>
+              <td>{{ request.book.name }}</td>
+              <td>
+                <a class="btn btn-success" href="{% url 'approve_return' request.id %}">Approve</a>
+                <a class="btn btn-danger" href="{% url 'reject_return' request.id %}">Reject</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No pending return requests.</p>
+    {% endif %}
+
+    <!-- Pending Fines -->
+    <h3>Pending Fines</h3>
+    {% if fines %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Member Email</th>
+            <th>Fine Amount</th>
+            <th>Reason</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fine in fines %}
+            <tr>
+              <td>{{ fine.member.user.email }}</td>
+              <td>{{ fine.amount }}</td>
+              <td>{{ fine.reason }}</td>
+              <td>
+                <a class="btn btn-success" href="{% url 'approve_fine' fine.id %}">Approve</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No pending fines.</p>
+    {% endif %}
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2024 Library Management System</p>
+  </div>
+
+</body>
+
+</html>

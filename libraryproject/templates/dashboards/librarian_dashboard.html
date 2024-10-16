@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+
+        .dashboard {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            width: 250px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            transition: background 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background: #0056b3;
+            border-radius: 5px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background: #ffffff;
+            overflow-y: auto;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-manage-books {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-borrow-records {
+            background-color: #FF5722;
+            color: white;
+        }
+
+        .btn-member-requests {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-member-status {
+            background-color: #FF9800;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <h2>Librarian Dashboard</h2>
+            <h2>hello,  {{ user.username }}</h2>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+               <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>hello, {{ user.username }} Welcome to Librarian Dashboard</h1><br><br>
+            </header>
+
+            <!-- Insert buttons from old template -->
+            <section>
+
+
+                <!-- Manage Books Button -->
+                <a href="{% url 'book_list' %}" class="btn btn-manage-books">
+                    Manage Books
+                </a>
+
+                <!-- View Borrow Records Button -->
+                <a href="{% url 'list_borrow_records' %}" class="btn btn-borrow-records">
+                    View Borrowed Records
+                </a>
+
+                <!-- Request Member Addition Button -->
+                <a href="{% url 'request_add_member' %}" class="btn btn-member-requests">
+                    Request Member Addition
+                </a>
+
+                <!-- View Member Request Status Button -->
+                <a href="{% url 'view_member_request_status' %}" class="btn btn-member-status">
+                    View Member Request Status
+                </a>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>
+

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Book</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h2>Return Book</h2>
+  <p>Are you sure you want to return the book "{{ borrow_record.book.name }}"?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Return Book</button>
+  </form>
+
+  <a href="{% url 'borrowed_books' %}">Cancel</a>
+</body>
+</html>

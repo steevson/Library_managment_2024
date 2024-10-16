@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Borrow Summary</title>
+    <style>
+        /* Add your styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #5c6bc0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Member Borrow Summary</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Total Books Borrowed</th>
+                    <th>Total Fine (Rs)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for summary in member_summary %}
+                <tr>
+                    <td>{{ summary.member.username }}</td>
+                    <td>{{ summary.total_borrowed }}</td>
+                    <td>{{ summary.total_fine }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3>Total Fines Collected: {{ total_fines_collected }}</h3>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Member Requests</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        nav {
+            background-color: transparent; /* Make navbar transparent */
+            color: #fff;
+            padding: 10px 20px;
+            box-shadow: none; /* Remove border/shadow */
+            position: absolute; /* Position navbar at the top */
+            width: 100%; /* Make it full width */
+            z-index: 1000; /* Ensure it stays above other content */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: gray; /* Gray color for links */
+            text-decoration: none;
+            font-weight: bold; /* Make text bold */
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: #5c6bc0; /* Blue */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #5c6bc0; /* Blue */
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f2f2f2; /* Light Gray */
+        }
+
+        td {
+            color: #333;
+        }
+
+        .status-approved {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-rejected {
+            color: red;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: orange;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <h2>My Member Requests</h2>
+
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+        {% for request in member_requests %}
+        <tr>
+            <td>{{ request.username }}</td>
+            <td>{{ request.first_name }}</td>
+            <td>{{ request.last_name }}</td>
+            <td>{{ request.email }}</td>
+            <td>
+                {% if request.is_approved %}
+                    <span class="status-approved">Approved</span>
+                {% elif request.is_approved is false %}
+                    <span class="status-rejected">Rejected</span>
+                {% else %}
+                    <span class="status-pending">Pending</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No requests submitted.</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!-- delete_book.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .confirmation {
+            max-width: 400px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #d9534f; /* Bootstrap danger color */
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #c9302c;
+        }
+
+        a {
+            text-decoration: none;
+            color: #5bc0de; /* Bootstrap info color */
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+             <li><a href="{% url 'home' %}">Home</a></li>
+
+            <li> <a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="confirmation">
+        <h1>Delete Book</h1>
+        <p>Are you sure you want to delete the book <strong>{{ book.name }}</strong>?</p>
+
+        <!-- Direct HTML form without Django forms.py -->
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Yes, delete</button>
+            <a href="{% url 'book_list' %}">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

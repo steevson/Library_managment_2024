@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Books</title>
+</head>
+<body>
+    <h1>Book List</h1>
+    <ul>
+        {% for book in books %}
+            <li>
+                <a href="{% url 'book_detail' book.id %}">{{ book.name }} by {{ book.author }}</a>
+                {% if request.user.is_authenticated and request.user.customuser.user_type == 3 %}
+                    <a href="{% url 'borrow_book' book.id %}">Borrow</a>
+                {% else %}
+                    <span>(Only members can borrow books)</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+

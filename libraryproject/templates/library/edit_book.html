@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #5cb85c;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4cae4c;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Books</a></li>
+            <li><a href="#">Add New Book</a></li>
+            <li><a href="#">Manage Members</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </nav>
+
+    <h1>Edit Book: {{ book.name }}</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>Name:</label>
+        <input type="text" name="name" value="{{ book.name }}" required>
+
+        <label>ISBN:</label>
+        <input type="text" name="isbn" value="{{ book.isbn }}" required>
+
+        <label>Author:</label>
+        <input type="text" name="author" value="{{ book.author }}" required>
+
+        <label>Category:</label>
+        <select name="category">
+            <option value="education" {% if book.category == 'education' %}selected{% endif %}>Education</option>
+            <option value="entertainment" {% if book.category == 'entertainment' %}selected{% endif %}>Entertainment</option>
+            <option value="comics" {% if book.category == 'comics' %}selected{% endif %}>Comics</option>
+            <option value="biography" {% if book.category == 'biography' %}selected{% endif %}>Biography</option>
+            <option value="history" {% if book.category == 'history' %}selected{% endif %}>History</option>
+        </select>
+
+        <label>Copies Available:</label>
+        <input type="number" name="copies_available" value="{{ book.copies_available }}" required>
+
+        <label>Current Book Image:</label>
+        {% if book.image_url %}
+            <img src="{{ book.image_url }}" alt="Current Book Image" class="image-preview">
+        {% endif %}
+
+        <label>Upload New Image (optional):</label>
+        <input type="file" name="img">
+
+        <button type="submit">Update Book</button>
+    </form>
+</body>
+</html>

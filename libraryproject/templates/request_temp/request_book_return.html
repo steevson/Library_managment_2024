@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Book Return</title>
+</head>
+<body>
+    <h1>Request Book Return</h1>
+    <p>You are requesting to return the book: {{ borrow_record.book.title }}</p>
+    <p>Due date: {{ borrow_record.due_date }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Submit Return Request</button>
+    </form>
+</body>
+</html>

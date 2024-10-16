@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approve Member Request</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        nav {
+            background-color: transparent; /* Make navbar transparent */
+            color: #fff;
+            padding: 10px 20px;
+            box-shadow: none; /* Remove border/shadow */
+            position: absolute; /* Position navbar at the top */
+            width: 100%; /* Make it full width */
+            z-index: 1000; /* Ensure it stays above other content */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: gray; /* Gray color for links */
+            text-decoration: none;
+            font-weight: bold; /* Make text bold */
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: #5c6bc0; /* Blue */
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px; /* Increased font size for better visibility */
+        }
+
+        button[name="approve"] {
+            background-color: #007bff; /* Bootstrap primary color (blue) */
+        }
+
+        button[name="approve"]:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        button[name="reject"] {
+            background-color: #dc3545; /* Bootstrap danger color (red) */
+        }
+
+        button[name="reject"]:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Approve or Reject Member Request</h2>
+        <p><strong>Username:</strong> {{ member_request.username }}</p>
+        <p><strong>First Name:</strong> {{ member_request.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ member_request.last_name }}</p>
+        <p><strong>Email:</strong> {{ member_request.email }}</p>
+        <p><strong>Address:</strong> {{ member_request.address }}</p>
+        <p><strong>Contact Number:</strong> {{ member_request.contact_number }}</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve">Approve</button>
+            <button type="submit" name="action" value="reject">Reject</button>
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

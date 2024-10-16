@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Member</title>
+</head>
+<body>
+<h2>Delete Member</h2>
+
+<p>Are you sure you want to delete {{ member_user.first_name }} {{ member_user.last_name }}?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+    <a href="{% url 'member_management' %}">Cancel</a>
+</form>
+</body>
+</html>

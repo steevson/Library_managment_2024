@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Global Library</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"
+    integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+
+
+
+
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .flip-card {
+      background-color: transparent;
+      perspective: 1000px;
+      margin: 10px;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+    }
+
+    .flip-card-front {
+      background-color: #bbb;
+      color: black;
+    }
+
+    .flip-card-back {
+      background-color: #000;
+      color: white;
+      transform: rotateY(180deg);
+    }
+
+    a.ex1:hover,
+    a.ex1:active {
+      color: red;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto 15% auto;
+      border: 1px solid #888;
+      width: 80%;
+      padding-bottom: 0px;
+    }
+
+    .close {
+      position: absolute;
+      right: 25px;
+      top: 0;
+      color: #000;
+      font-size: 35px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: red;
+      cursor: pointer;
+    }
+
+    /* Input and button styles */
+    input[type=text],
+    input[type=password] {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #1b8ffc;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    .cancelbtn {
+      width: auto;
+      padding: 10px 18px;
+      background-color: #f44336;
+    }
+
+    .imgcontainer {
+      text-align: center;
+      margin: 24px 0 12px 0;
+      position: relative;
+    }
+
+    img.avatar {
+      width: 40%;
+      border-radius: 50%;
+    }
+
+    .container {
+      padding: 16px;
+    }
+
+    span.psw {
+      float: right;
+      padding-top: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#" style="font-weight: bolder; font-size: 25px;">Global Library Management</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="#" style="font-weight: bolder; font-size: 20px;">HOME</a></li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="font-weight: bolder; font-size: 20px;">Category <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="#">Comics</a></li>
+          <li><a href="#">History</a></li>
+          <li><a href="#">Entertainment</a></li>
+          <li><a href="#">Education</a></li>
+          <li><a href="#">Biography</a></li>
+        </ul>
+      </li>
+      <li><a href="#" style="font-weight: bolder; font-size: 20px;">Contact us</a></li>
+    </ul>
+
+    <ul class="nav navbar-nav navbar-right">
+      {% if user.is_authenticated %}
+        <li>
+          <a href="{% if user.user_type == 1 %}{% url 'admin_dashboard' %}
+                   {% elif user.user_type == 2 %}{% url 'librarian_dashboard' %}
+                   {% elif user.user_type == 3 %}{% url 'member_dashboard' %}
+                   {% endif %}"
+              style="font-weight: bolder; font-size: large;">
+            <span class="glyphicon glyphicon-dashboard"></span> Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="#" style="font-weight: bolder; font-size: large;">
+            <span class="glyphicon glyphicon-user"></span> {{ user.username }}
+          </a>
+        </li>
+        <li><a href="{% url 'logout' %}" style="font-weight: bolder; font-size: large;">
+            <span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+      {% else %}
+
+        <li><a href="{% url 'login' %}" style="font-weight: bolder; font-size: large;">
+            <span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+
+
+  <div id="id01" class="modal">
+
+    <form class="modal-content animate" action="/action_page.php" method="POST">
+      <div class="imgcontainer">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close"
+          title="Close Modal">&times;</span>
+        <img src="https://img.freepik.com/premium-photo/illustration-girl-reading-books-educational-content_1029476-449864.jpg"
+          alt="Avatar" class="avatar">
+      </div>
+    <div class="container" style="padding-right: 41px;margin-left: 48px;width: 92%;margin-top: 56px;">
+      <label for="Email"><b>Email</b></label>
+        <input type="email" placeholder="Enter Username" name="email" required>
+
+        <label for="password"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" required>
+
+        <button type="submit">Login</button>
+        <label>
+          <input type="checkbox" checked="checked" name="remember"> Remember me
+        </label>
+      </div>
+      <div class="container" style="background-color: #f1f1f1; border-right-width: 70%;padding-right: 20px;margin-top: 60px;width: 100%;">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">
+          Cancel
+        </button>
+        <span class="psw">
+          Forgot <a href="#">password?</a>
+        </span>
+      </div>
+
+    </form>
+  </div>
+  <script>
+    var modal = document.getElementById('id01');
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
+<br>
+  <div class="container">
+    <h1 class="text-center font-weight-bold" style="font-weight: bolder;">Global Library Management</h1>
+    <h3 class="text-center" style="color: blue;">Explore Books</h3><br><br>
+    <div class="row">
+      <div class="col-sm-3 col-md-3">
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <img src="https://img.etimg.com/photo/msid-100774186,imgsize-58162/HumanPsychology%3ALearners'Mindset.jpg"
+                alt="Human Psychology" style="width:100%; height:100%;">
+            </div>
+            <div class="flip-card-back">
+              <h1>Goyal Mukta</h1>
+              <p>Psychology</p>
+              <p>The Human Psychology Book is your visual guide to the unique and fascinating world of human behaviour.
+                Learn how we learn, form emotional bonds with others, and develop coping mechanisms to deal with
+                adversity or conform to social norms.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-3 col-md-3">
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <img
+                src="https://makeheadway.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F181188%2F7aef79f4eb%2F3o1a26mbwodq8nvs4mbo-160aa69b40fe0c-en.jpg&w=750&q=75"
+                alt="The Last Black Unicorn" style="width:100%; height:100%;">
+            </div>
+            <div class="flip-card-back">
+              <h1>Tiffany Haddish</h1>
+              <p>Genres</p>
+              <p>Tiffany Haddish has become known for her unabashed honesty, and continues to keep it 100 in new memoir,
+                "The Last Black Unicorn." It's an entertaining and engaging, must-read page-turner.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-3 col-md-3">
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <img src="https://booksandyou.in/cdn/shop/files/AtomicHabitsJamesClear_1.jpg?v=1694877821"
+                alt="Atomic Habits" style="width:100%; height:100%;">
+            </div>
+            <div class="flip-card-back">
+              <h1>Atomic Habits</h1>
+              <p>Self-help Book</p>
+              <p>Atomic Habits presents a proven system for building good habits and breaking bad ones. The key to
+                building lasting habits is focusing on creating a new identity first. Your current behaviors are simply
+                a reflection of your current identity.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-3 col-md-3">
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <img src="https://m.media-amazon.com/images/I/410HvKUSIgL.SL500.jpg" alt="The Art of Teaching Children"
+                style="width:100%; height:100%;">
+            </div>
+            <div class="flip-card-back">
+              <h1>Phillip Done</h1>
+              <p>Biography</p>
+              <p>Part memoir, part practical guide, The Art of Teaching Children reminds educators that the spark that
+                led them to choose teaching as their life's work will ignite their imaginations and optimism even when
+                faced with day-to-day challenges.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="center"><a class="ex1" href="default.asp"> <br>Show more..</a></p>
+  </div>
+
+</body>
+
+</html>
+
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Style inputs */
+  input[type=text],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+  }
+
+  input[type=submit] {
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+  }
+
+  input[type=submit]:hover {
+    background-color: #45a049;
+  }
+
+  /* Style the container/contact section */
+  .container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 10px;
+  }
+
+  /* Create two columns that float next to eachother */
+  .column {
+    float: left;
+    width: 50%;
+    margin-top: 6px;
+    padding: 20px;
+  }
+
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+  @media screen and (max-width: 600px) {
+
+    .column,
+    input[type=submit] {
+      width: 100%;
+      margin-top: 0;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .about-us {
+      display: flex;
+      align-items: center;
+      height: 100vh;
+      width: 100%;
+      padding: 90px 0;
+      background: #fff;
+    }
+
+    .pic {
+      height: auto;
+      width: 400px;
+      border-radius: 12px;
+    }
+
+    .about {
+      width: 1130px;
+      max-width: 85%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    .text {
+      width: 540px;
+    }
+
+    .text h2 {
+      color: #333;
+      font-size: 70px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .text h5 {
+      color: #333;
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    span {
+      color: #4070f4;
+    }
+
+    .text p {
+      color: #333;
+      font-size: 18px;
+      line-height: 25px;
+      letter-spacing: 1px;
+    }
+
+    .data {
+      margin-top: 30px;
+    }
+
+    .hire {
+      font-size: 18px;
+      background: #4070f4;
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 6px;
+      transition: 0.5s;
+    }
+
+    .hire:hover {
+      background: #000;
+    }
+  </style>
+  </head>
+
+  <body>
+    <section class="about-us">
+      <div class="about" style="padding-bottom: -50px;padding-bottom: 200px;">
+        <img src="https://content.jdmagicbox.com/comp/def_content/libraries/default-libraries-2-250.jpg" class="pic" />
+        <div class="text">
+          <h2>About Us</h2>
+          <h5>The Global <span>Library Management</span></h5>
+          <p>An international library serves as a global resource for research, education, and cultural exchange. It
+            typically offers a diverse collection of books, journals, and digital resources in multiple languages,
+            catering to an international audience. These libraries often facilitate collaboration between countries and
+            institutions, promoting understanding and accessibility to information. They may also host events,
+            exhibitions, and programs that highlight global issues, literature, and cultural heritage, fostering a sense
+            of community among users from various backgrounds.</p>
+          <div class="data">
+            <a href="{% url 'list_all_book' %}" class="hire">Get your books now</a>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+
+  </html>

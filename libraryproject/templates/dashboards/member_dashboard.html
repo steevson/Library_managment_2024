@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Student Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+            color: #333;
+        }
+        .dashboard {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            background: #5c6bc0;
+            color: white;
+            padding: 20px;
+            width: 250px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .sidebar h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .sidebar ul {
+            list-style-type: none;
+        }
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .sidebar ul li a:hover {
+            background: #3949ab;
+            transform: translateX(5px);
+            border-radius: 5px;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background: white;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            width: 50px;
+            height: 75px;
+            object-fit: cover;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-addbook {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .fine {
+            color: red;
+            font-weight: bold;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+        .card-1 {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b); /* Coral */
+        }
+        .card-2 {
+            background: linear-gradient(135deg, #6a11cb, #2575fc); /* Purple to Blue */
+        }
+        .card-3 {
+            background: linear-gradient(135deg, #00c6ff, #0072ff); /* Sky Blue */
+        }
+        .card-4 {
+            background: linear-gradient(135deg, #ff758c, #ff7eb3); /* Pink */
+        }
+        .card-5 {
+            background: linear-gradient(135deg, #ff512f, #dd2476); /* Red to Pink */
+        }
+        .card-6 {
+            background: linear-gradient(135deg, #00c6a0, #1a3e90); /* Teal */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <h2>Student Dashboard</h2>
+            <h2>hello,  {{ user.username }}</h2>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'member_borrow_records' %}">Borrowed Books</a></li>
+                <li><a href="{% url 'list_all_book' %}">Continue Browsing</a></li>
+                <li><a href="#">Courses</a></li>
+                <li><a href="{% url 'member_profile' %}">Profile</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <header>
+                <h1>Welcome Back,  {{ user.username }}</h1><br><br>
+            </header>
+
+            <!-- Display list of available books -->
+            <h2>Library Management</h2><br><br>
+            <h3>Available Books</h3><br><br>
+            {% if books %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Copies Available</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td><img src="{{ book.img.url }}" alt="Cover image of {{ book.name }}"></td>
+                            <td>{{ book.name }}</td>
+                            <td>{{ book.author }}</td>
+                            <td>{{ book.category }}</td>
+                            <td>{{ book.copies_available }}</td>
+                            <td><a class="btn btn-addbook" href="{% url 'add_to_cart' book.id %}">Borrow</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a class="btn btn-addbook" href="{% url 'view_cart' %}">View Cart</a><br><br>
+            {% else %}
+                <p>No books available.</p>
+            {% endif %}
+
+            <!-- Display list of borrowed books -->
+            <h3>My Borrow Records</h3><br>
+            <a class="btn btn-addbook" href="{% url  'member_borrow_records' %}">View My Borrowed Books</a><br>
+            <a class="btn btn-addbook" href="{% url 'list_all_book' %}">Continue Browsing Books</a><br><br>
+
+            <!-- Display fines -->
+            <h3>Your Fines</h3><br>
+             <!-- Button to View Pending Fines -->
+        <a class="btn btn-addbook" href="{% url 'payment_success' %}">check Fines</a>
+            <!-- Additional dashboard cards -->
+
+        </main>
+    </div>
+</body>
+</html>

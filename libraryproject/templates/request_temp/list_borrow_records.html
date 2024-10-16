@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Records</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #5c6bc0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+        .btn-approve {
+            background-color: #5c6bc0; /* Blue */
+        }
+        .btn-approve:hover {
+            background-color: #3949ab; /* Darker Blue */
+        }
+        .btn-return {
+            background-color: #ff7043; /* Orange */
+        }
+        .btn-return:hover {
+            background-color: #ff5722; /* Darker Orange */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Borrow Records</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Borrowed On</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in borrow_records %}
+                <tr>
+                    <td>{{ record.book.name }}</td>
+                    <td>{{ record.member.username }}</td>
+                    <td>{{ record.borrowed_on }}</td>
+                    <td>{{ record.status }}</td>
+                    <td>
+                        <!-- For borrowing approval -->
+                        {% if record.status == 'Pending Approval' %}
+                        <form action="{% url 'approve_borrow_request' record.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-approve">Approve Borrow</button>
+                        </form>
+                        {% endif %}
+
+                        <!-- For return approval -->
+                        {% if record.status == 'Return Requested' %}
+                        <form action="{% url 'approve_return_request' record.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-return">Approve Return</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

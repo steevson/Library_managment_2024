@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Borrow Records</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #5c6bc0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .fine {
+            color: red;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-return {
+            background-color: #5c6bc0;
+        }
+        .btn-return:hover {
+            background-color: #3949ab;
+        }
+        .btn-browse {
+            background-color: #00c6ff;
+        }
+        .btn-browse:hover {
+            background-color: #0072ff;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Borrow Records</h1>
+
+        {% if borrow_records %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>Borrowed On</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Fine</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in borrow_records %}
+                    <tr>
+                        <td>{{ record.book.name }}</td>
+                        <td>{{ record.borrowed_on }}</td>
+                        <td>{{ record.due_date }}</td>
+                        <td>{{ record.status }}</td>
+                        <td class="fine">{{ record.fine|default:"0" }}</td>  <!-- Display calculated fine -->
+                        <td>
+                            {% if record.status == 'Borrowed' %}
+                                <form action="{% url 'return_book' record.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-return">Return Book</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You have no borrow records.</p>
+        {% endif %}
+
+        <a href="{% url 'list_all_book' %}" class="btn btn-browse">Continue Browsing Books</a>
+    </div>
+</body>
+</html>

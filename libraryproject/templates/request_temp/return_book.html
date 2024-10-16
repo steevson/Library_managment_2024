@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Return Book</title>
+</head>
+<body>
+    <h1>Return Book</h1>
+    <p>Are you sure you want to return {{ borrow_record.book.name }}?</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <button type="submit">Return</button>
+    </form>
+    <a href="{% url 'member_borrow_records' %}">Cancel</a>
+</body>
+</html>
