@@ -57,7 +57,7 @@ class BorrowRecord(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk and self.status == 'Borrowed':
-            self.due_date = timezone.now() + timedelta(days=2)  # Set due date to 15 days from now
+            self.due_date = timezone.now() + timedelta(days=2)
         super().save(*args, **kwargs)
 
     def approve(self):

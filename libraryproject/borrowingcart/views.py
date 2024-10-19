@@ -76,7 +76,7 @@ def borrow_from_cart(request):
 
     if request.method == 'POST':
         for item in items:
-            due_date = timezone.now() + timedelta(days=15)  # Set due date to 15 days from now
+            due_date = timezone.now() + timedelta(days=2)  # Set due date to 15 days from now
             BorrowRecord.objects.create(
                 book=item.book,
                 member=request.user,

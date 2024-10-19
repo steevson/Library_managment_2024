@@ -72,5 +72,5 @@ def list_all_book(request):
     return render(request, 'library/list_all_book.html', {'books': books, 'book_count': book_count})
 
 
-
-
+def search_books_view(request):
+    return render(request, 'library/search_books.html')

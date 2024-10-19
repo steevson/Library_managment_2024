@@ -5,6 +5,7 @@ from .views import (
     edit_book,
     delete_book,
     list_all_book,
+    search_books_view,
 
 
 )
@@ -15,5 +16,5 @@ urlpatterns = [
     path('books/edit/<int:book_id>/', edit_book, name='edit_book'),  # Edit book details
     path('books/delete/<int:book_id>/', delete_book, name='delete_book'),  # Delete a book
     path('books/all/', list_all_book, name='list_all_book'),  # List all books in detail
-
+    path('search_books/', search_books_view, name='search_books'),
 ]

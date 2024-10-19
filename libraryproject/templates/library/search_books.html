@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Book Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin: 5px;
+            width: 250px;
+        }
+        button {
+            padding: 8px;
+            margin: 5px;
+        }
+        .book {
+            display: flex;
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .book-image {
+            margin-right: 20px;
+        }
+        .book-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .book-authors {
+            color: #555;
+        }
+        .book img {
+            max-height: 150px;
+            max-width: 100px;
+            object-fit: contain;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        }
+        .read-link {
+            margin-top: 10px;
+            display: inline-block;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .read-link:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Library Book Search</h1>
+
+    <div>
+        <input type="text" id="bookTitle" placeholder="Enter Book Title">
+        <input type="text" id="authorName" placeholder="Enter Author Name">
+        <button onclick="searchBooks()">Search</button>
+    </div>
+
+    <div id="bookResults"></div>
+
+    <script>
+        function searchBooks() {
+            const bookTitle = document.getElementById('bookTitle').value;
+            const authorName = document.getElementById('authorName').value;
+            const apiKey = 'AIzaSyCabrI8L1a2t2SPHhwAtPCh-nZ02GsrcSQ';
+            let query = '';
+
+            if (bookTitle) {
+                query += `intitle:${bookTitle}`;
+            }
+            if (authorName) {
+                if (query) query += '+';
+                query += `inauthor:${authorName}`;
+            }
+
+            if (!query) {
+                alert('Please enter at least a book title or author name.');
+                return;
+            }
+
+            const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&key=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById('bookResults');
+                    resultsDiv.innerHTML = '';
+
+                    if (data.items) {
+                        data.items.forEach(book => {
+                            const title = book.volumeInfo.title || 'No title available';
+                            const authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Unknown author';
+                            const thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : '';
+                            const previewLink = book.volumeInfo.previewLink || ''; // Get the preview link
+
+                            const bookDiv = document.createElement('div');
+                            bookDiv.classList.add('book');
+
+                            bookDiv.innerHTML = `
+                                <div class="book-image">
+                                    <img src="${thumbnail}" alt="Book Image">
+                                </div>
+                                <div>
+                                    <div class="book-title">${title}</div>
+                                    <div class="book-authors">by ${authors}</div>
+                                    ${previewLink ? `<a href="${previewLink}" class="read-link" target="_blank">Read Preview</a>` : ''}
+                                </div>
+                            `;
+
+                            resultsDiv.appendChild(bookDiv);
+                        });
+                    } else {
+                        resultsDiv.innerHTML = 'No books found.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching book data:', error);
+                    document.getElementById('bookResults').innerHTML = 'Failed to fetch books. Please try again later.';
+                });
+        }
+    </script>
+
+</body>
+</html>
