@@ -76,7 +76,7 @@ def borrow_from_cart(request):
 
     if request.method == 'POST':
         for item in items:
-            due_date = timezone.now() + timedelta(days=2)  # Set due date to 15 days from now
+            due_date = timezone.now() + timedelta(days=2)
             BorrowRecord.objects.create(
                 book=item.book,
                 member=request.user,
@@ -110,16 +110,28 @@ def remove_from_cart(request, item_id):
 
 ######################### fines ##################
 
-
-
-
+# View for displaying pending fines
 @login_required
-@user_passes_test(is_member)  # Assuming 3 is the user_type for Member
+@user_passes_test(is_member)
 def pending_fines(request):
-    # Get the borrow records of the logged-in member
-    borrow_records = BorrowRecord.objects.filter(member=request.user, fine__gt=0)
+    borrow_records = BorrowRecord.objects.filter(member=request.user, status='Returned')
+    total_pending_fines = 0
+    overdue_fine_per_day = 10  # Fine rate per day
 
-    total_pending_fines = sum(record.fine for record in borrow_records)
+    for record in borrow_records:
+        if record.returned_on and record.returned_on > record.due_date:
+            # Fine calculation for already returned books
+            if not record.fine:  # Avoid recalculating fines
+                overdue_days = (record.returned_on - record.due_date).days
+                record.fine = overdue_days * overdue_fine_per_day
+                record.save()
+        elif not record.returned_on and timezone.now() > record.due_date:
+            # Fine calculation for overdue books that are not returned yet
+            overdue_days = (timezone.now() - record.due_date).days
+            record.fine = overdue_days * overdue_fine_per_day
+            record.save()
+
+        total_pending_fines += record.fine
 
     return render(request, 'fines/pending_fines.html', {
         'borrow_records': borrow_records,
@@ -127,8 +139,9 @@ def pending_fines(request):
     })
 
 
+# View for displaying fine payment details
 @login_required
-@user_passes_test(is_member)  # Assuming 3 is the user_type for Member
+@user_passes_test(is_member)
 def fine_payment_view(request):
     user = request.user
     fines = BorrowRecord.objects.filter(member=user, status='Returned', fine__gt=0)
@@ -144,25 +157,32 @@ def fine_payment_view(request):
     return render(request, 'fines/payment.html', context)
 
 
-
-
 @csrf_exempt
 def payment_success(request):
     if request.method == 'POST':
-        # Get data from the request
         payment_id = request.POST.get('razorpay_payment_id')
         order_id = request.session.get('razorpay_order_id')
 
-        # Verify payment (optional but recommended)
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_SECRET_KEY))
         payment = client.payment.fetch(payment_id)
+        print("Payment details:", payment)  # Debugging line
 
         if payment['status'] == 'captured':
-            # Payment successful, update the fine records
+            print("Payment captured:", payment)  # Debugging line
+
+            # Fetch borrow records with outstanding fines
             borrow_records = BorrowRecord.objects.filter(member=request.user, fine__gt=0)
+            print(f"Found {borrow_records.count()} records with fines for user {request.user.id}")  # Debugging line
+
+            # Delete each borrow record after confirming payment
             for record in borrow_records:
-                record.fine = 0  # Reset fine after payment
-                record.save()
+                print(f"Deleting record {record.id} with fine {record.fine}")  # Debugging line
+                record.delete()  # Delete the borrow record after fine is paid
+
+            # Confirm deletion
+            remaining_records = BorrowRecord.objects.filter(member=request.user, fine__gt=0)
+            print(f"Remaining records after deletion: {remaining_records.count()}")  # Debugging line
+
             messages.success(request, "Payment successful! Your fines have been cleared.")
         else:
             messages.error(request, "Payment failed. Please try again.")
@@ -170,12 +190,25 @@ def payment_success(request):
     return redirect('pending_fines')
 
 
+# View to mark a book as returned and calculate fines if overdue
 @login_required
 @user_passes_test(is_member)
-def pending_fines(request):
-    # Logic to fetch pending fines for the member, if any.
+def return_book(request, borrow_record_id):
+    borrow_record = get_object_or_404(BorrowRecord, id=borrow_record_id, member=request.user)
 
-    return render(request, 'fines/pending_fines.html')
-# Create your views here.
+    if request.method == 'POST':
+        borrow_record.returned_on = timezone.now()  # Set the returned date
+        borrow_record.status = 'Returned'  # Mark the book as returned
 
+        # Calculate fine if the book is overdue
+        if borrow_record.returned_on > borrow_record.due_date:
+            overdue_days = (borrow_record.returned_on - borrow_record.due_date).days
+            borrow_record.fine = overdue_days * 4  # Fine of 4 per day
+        else:
+            borrow_record.fine = 0  # Reset fine if returned on time
 
+        borrow_record.save()
+
+        return redirect('pending_fines')
+
+    return render(request, 'fines/return_book.html', {'borrow_record': borrow_record})

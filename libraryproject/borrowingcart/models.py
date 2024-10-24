@@ -68,15 +68,17 @@ class BorrowRecord(models.Model):
             self.save()
 
     def return_book(self):
-        """Mark the book as returned and update the book's available copies."""
-        self.return_date = timezone.now()  # Set the return date to now
-        self.status = 'Returned'  # Update status
+        """Mark the book as returned and calculate fine."""
+        self.returned_on = timezone.now()  # Set the return date to now
+        self.status = 'Returned'  # Update status to 'Returned'
 
-        # Increment the copies available for the book
-        self.book.copies_available += 1
+        # Calculate fine if book is returned late
+        self.calculate_fine()  # Call the fine calculation method
+
+        self.book.copies_available += 1  # Increase available copies of the book
         self.book.save()  # Save changes to the book
 
-        self.save()  # Save changes to the database
+        self.save()  # Save the return status and fine to the database
 
     def approve_return(self):
         """Librarian approves the return."""
@@ -87,12 +89,21 @@ class BorrowRecord(models.Model):
             self.book.copies_available += 1  # Increment available copies
             self.book.save()  # Save the changes to the book
             self.save()
+
     def calculate_fine(self):
         """Calculate the fine if the book is returned late."""
-        if self.status == 'Returned' and self.returned_on:  # Changed from return_date to returned_on
-            if self.returned_on > self.due_date:  # Using returned_on for comparison
+        print(
+            f"Calculating fine for: {self.book.name}, Status: {self.status}, Returned On: {self.returned_on}, Due Date: {self.due_date}")
+
+        if self.status == 'Returned' and self.returned_on:  # Check if the book has been returned
+            if self.returned_on > self.due_date:  # If returned late
                 days_late = (self.returned_on - self.due_date).days
-                self.fine = days_late * 4  # Assuming 4 rupees per day
-                self.save()  # Save the fine to the database
+                self.fine = days_late * 4  # Assuming 4 rupees per day late
+                print(f"Days late: {days_late}, Fine: {self.fine}")  # Debugging print statement
+            else:
+                self.fine = 0  # No fine if returned on time
+            self.save()  # Save the fine to the database
         return self.fine
+
+
 
